@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentification Moderne</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Fond miroir animé */
+        .mirror-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460, #16213e, #1a1a2e);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: 0;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Particules flottantes */
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,255,255,0.8), transparent);
+            border-radius: 50%;
+            animation: floatParticle 20s infinite;
+            pointer-events: none;
+        }
+
+        .particle:nth-child(1) { width: 4px; height: 4px; left: 10%; top: 20%; animation-delay: 0s; animation-duration: 15s; }
+        .particle:nth-child(2) { width: 6px; height: 6px; left: 20%; top: 80%; animation-delay: 2s; animation-duration: 18s; }
+        .particle:nth-child(3) { width: 3px; height: 3px; left: 60%; top: 30%; animation-delay: 4s; animation-duration: 20s; }
+        .particle:nth-child(4) { width: 5px; height: 5px; left: 80%; top: 60%; animation-delay: 1s; animation-duration: 16s; }
+        .particle:nth-child(5) { width: 4px; height: 4px; left: 30%; top: 50%; animation-delay: 3s; animation-duration: 19s; }
+        .particle:nth-child(6) { width: 6px; height: 6px; left: 70%; top: 10%; animation-delay: 5s; animation-duration: 17s; }
+        .particle:nth-child(7) { width: 3px; height: 3px; left: 90%; top: 90%; animation-delay: 2.5s; animation-duration: 21s; }
+        .particle:nth-child(8) { width: 5px; height: 5px; left: 15%; top: 70%; animation-delay: 4.5s; animation-duration: 14s; }
+
+        @keyframes floatParticle {
+            0%, 100% { 
+                transform: translate(0, 0) scale(1);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            50% { 
+                transform: translate(100px, -100px) scale(1.5);
+            }
+        }
+
+        /* Effet de lumière */
+        .light-effect {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .light {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .light1 {
+            width: 400px;
+            height: 400px;
+            background: rgba(66, 153, 225, 0.3);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .light2 {
+            width: 500px;
+            height: 500px;
+            background: rgba(159, 122, 234, 0.25);
+            bottom: -150px;
+            right: -150px;
+            animation-delay: 2s;
+        }
+
+        .light3 {
+            width: 350px;
+            height: 350px;
+            background: rgba(236, 72, 153, 0.2);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 1s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1) translate(0, 0);
+                opacity: 0.3;
+            }
+            50% { 
+                transform: scale(1.2) translate(20px, 20px);
+                opacity: 0.6;
+            }
+        }
+
+        /* Container avec effet miroir */
+        .container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 50px 40px;
+            border-radius: 30px;
+            box-shadow: 
+                0 8px 32px 0 rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 480px;
+            animation: containerFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes containerFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                transparent, 
+                rgba(66, 153, 225, 0.5), 
+                rgba(159, 122, 234, 0.5), 
+                rgba(236, 72, 153, 0.5),
+                transparent);
+            border-radius: 30px;
+            z-index: -1;
+            animation: borderRotate 3s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .container:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes borderRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Logo avec animation */
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(66, 153, 225, 0.5)); }
+            50% { filter: drop-shadow(0 0 20px rgba(159, 122, 234, 0.8)); }
+        }
+
+        .logo h1 {
+            background: linear-gradient(135deg, #4299e1, #9f7aea, #ec4899);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 42px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            animation: textShine 3s ease-in-out infinite;
+            letter-spacing: 2px;
+        }
+
+        @keyframes textShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .logo p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
+
+        /* Tabs avec effet néon */
+        .tabs {
+            display: flex;
+            margin-bottom: 35px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tabs::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(66, 153, 225, 0.3), rgba(159, 122, 234, 0.3));
+            border-radius: 12px;
+            transition: transform 0.3s ease;
+            z-index: 0;
+        }
+
+        .tabs.register-active::before {
+            transform: translateX(100%);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px;
+            text-align: center;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab.active {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Formulaires */
+        .form-container {
+            position: relative;
+            min-height: 400px;
+        }
+
+        .form {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: none;
+        }
+
+        .form.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            animation: slideUp 0.5s ease-out backwards;
+        }
+
+        .input-group:nth-child(1) { animation-delay: 0.1s; }
+        .input-group:nth-child(2) { animation-delay: 0.2s; }
+        .input-group:nth-child(3) { animation-delay: 0.3s; }
+        .input-group:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: rgba(66, 153, 225, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 
+                0 0 20px rgba(66, 153, 225, 0.3),
+                inset 0 1px 3px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 25px;
+        }
+
+        .forgot-password a {
+            color: #4299e1;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .forgot-password a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #4299e1, #9f7aea);
+            transition: width 0.3s ease;
+        }
+
+        .forgot-password a:hover::after {
+            width: 100%;
+        }
+
+        .forgot-password a:hover {
+            text-shadow: 0 0 10px rgba(66, 153, 225, 0.8);
+        }
+
+        /* Bouton principal avec effet brillant */
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #4299e1, #9f7aea, #ec4899);
+            background-size: 200% 200%;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 25px rgba(66, 153, 225, 0.4);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: buttonShine 3s infinite;
+        }
+
+        @keyframes buttonShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(66, 153, 225, 0.6);
+            animation: buttonPulse 1.5s infinite;
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        /* Divider animé */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 35px 0;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: dividerGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes dividerGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .divider span {
+            padding: 0 20px;
+            letter-spacing: 2px;
+        }
+
+        /* Boutons sociaux avec effet miroir */
+        .social-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .btn-social {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-social::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+
+        .btn-social:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-social:hover {
+            border-color: rgba(66, 153, 225, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(66, 153, 225, 0.3);
+        }
+
+        .btn-social img {
+            width: 28px;
+            height: 28px;
+            position: relative;
+            z-index: 1;
+            filter: brightness(1.2);
+            transition: transform 0.3s ease;
+        }
+
+        .btn-social:hover img {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .btn-social svg {
+            width: 28px;
+            height: 28px;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-social:hover svg {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        /* Terms */
+        .terms {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.6;
+        }
+
+        .terms a {
+            color: #4299e1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .terms a:hover {
+            color: #9f7aea;
+            text-shadow: 0 0 10px rgba(159, 122, 234, 0.5);
+        }
+
+        /* Message de succès */
+        .success-message {
+            display: none;
+            padding: 15px;
+            background: rgba(72, 187, 120, 0.2);
+            border: 1px solid rgba(72, 187, 120, 0.4);
+            border-radius: 12px;
+            color: #68d391;
+            margin-bottom: 25px;
+            animation: messageSlide 0.5s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 40px 25px;
+            }
+
+            .logo h1 {
+                font-size: 36px;
+            }
+
+            .social-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-social img,
+            .btn-social svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mirror-background"></div>
+    
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="light-effect">
+        <div class="light light1"></div>
+        <div class="light light2"></div>
+        <div class="light light3"></div>
+    </div>
+
+    <div class="container">
+        <div class="logo">
+            <h1>✨ AuthFlow</h1>
+            <p>Connectez-vous à votre espace</p>
+        </div>
+
+        <div class="tabs" id="tabsContainer">
+            <button class="tab active" onclick="switchTab('login')">Connexion</button>
+            <button class="tab" onclick="switchTab('register')">Inscription</button>
+        </div>
+
+        <div id="successMessage" class="success-message"></div>
+
+        <div class="form-container">
+            <!-- Formulaire de connexion -->
+            <form id="loginForm" class="form active" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="votre@email.com" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="loginPassword">Mot de passe</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="#" onclick="showMessage('Lien de réinitialisation envoyé !'); return false;">Mot de passe oublié ?</a>
+                </div>
+
+                <button type="submit" class="btn-primary">Se connecter</button>
+
+                <div class="divider">
+                    <span>OU</span>
+                </div>
+
+                <div class="social-buttons">
+                    <a title="Login with google" href="{{ route('social.redirect', 'google') }}" class="btn-social">
+                        <img src="{{ asset('assets/google.jpeg') }}" alt="Google">
+                    </a>
+                    <a title="Login with facebook" href="{{ route('social.redirect', 'facebook') }}" class="btn-social">
+                        <img src="{{ asset('assets/facebook.png') }}" alt="Facebook">
+                    </a>
+                    <button type="button" class="btn-social" onclick="handleSocialLogin('GitHub')">
+                        <svg viewBox="0 0 24 24" fill="white">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Formulaire d'inscription -->
+            <form id="registerForm" class="form" onsubmit="handleRegister(event)">
+                <div class="input-group">
+                    <label for="registerName">Nom complet</label>
+                    <input type="text" id="registerName" placeholder="Jean Dupont" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" placeholder="votre@email.com" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="registerPassword">Mot de passe</label>
+                    <input type="password" id="registerPassword" placeholder="••••••••" required minlength="6">
+                </div>
+
+                <div class="input-group">
+                    <label for="registerConfirmPassword">Confirmer le mot de passe</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="••••••••" required>
+                </div>
+
+                <div class="terms">
+                    En vous inscrivant, vous acceptez nos <a href="#">Conditions d'utilisation</a> et notre <a href="#">Politique de confidentialité</a>
+                </div>
+
+                <button type="submit" class="btn-primary">Créer un compte</button>
+
+                <div class="divider">
+                    <span>OU</span>
+                </div>
+
+                <div class="social-buttons">
+                    <a title="Register with google" href="{{ route('social.redirect', 'google') }}" class="btn-social">
+                        <img src="{{ asset('assets/google.jpeg') }}" alt="Google">
+                    </a>
+                    <a title="Register with facebook" href="{{ route('social.redirect', 'facebook') }}" class="btn-social">
+                        <img src="{{ asset('assets/facebook.png') }}" alt="Facebook">
+                    </a>
+                    <button type="button" class="btn-social" onclick="handleSocialLogin('GitHub')">
+                        <svg viewBox="0 0 24 24" fill="white">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab');
+            const forms = document.querySelectorAll('.form');
+            const tabsContainer = document.getElementById('tabsContainer');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+                tabsContainer.classList.remove('register-active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+                tabsContainer.classList.add('register-active');
+            }
+            
+            hideMessage();
+        }
+
+        function showMessage(text) {
+            const msg = document.getElementById('successMessage');
+            msg.textContent = text;
+            msg.style.display = 'block';
+            setTimeout(() => hideMessage(), 3000);
+        }
+
+        function hideMessage() {
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            showMessage(`✨ Connexion réussie ! Bienvenue ${email}`);
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+            if (password !== confirmPassword) {
+                showMessage('❌ Les mots de passe ne correspondent pas !');
+                return;
+            }
+
+            showMessage(`🎉 Compte créé avec succès ! Bienvenue ${name}`);
+        }
+
+        function handleSocialLogin(provider) {
+            showMessage(`🚀 Connexion avec ${provider} en cours...`);
+        }
+    </script>
+</body>
+</html>
