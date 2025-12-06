@@ -11,35 +11,42 @@ use Laravel\Socialite\Facades\Socialite;
 
 class SocialliteController extends Controller
 {
-    public function redirectToGoogle()
+    public function authProviderRedirect($provider)
     {
-        return Socialite::driver('google')->redirect();
+        if($provider){
+            return Socialite::driver($provider)->redirect();
+        }
+        abort(404);
     }
 
-    // Callback from Google
 
-    public function handleGoogleCallback()
-    {
-        $googleUser = Socialite::driver('google')->user();
-
-        $user = User::where('google_id', $googleUser->id)->first();
-       try{
+    public function socialAuthentication($provider)
+    { try{
+        if($provider){
+$socialUser = Socialite::driver($provider)->stateless()->user();            $user = User::where('auth_provider_id', $socialUser->id)->first();
+      
             if($user){
             Auth::login($user);
-            return redirect()->route('dashboard');
         }
         else{
             $userData = User::create([
-                'name' => $googleUser->name,
-                'email' => $googleUser->email,
-                'google_id' => $googleUser->id,
+                'name' => $socialUser->name,
+                'email' => $socialUser->email,
+                'auth_provider_id' => $socialUser->id,
+                'auth_provider' => $provider,
                 'password' => Hash::make('PasseIci123!'),
+
             ]);
             if($userData){
                 Auth::login($userData);
                 return redirect()->route('dashboard');
             }
         }
+           return redirect()->route('dashboard');
+        }
+        abort(404);
+
+        
        }catch(\Exception $e){
         dd($e->getMessage());
        }

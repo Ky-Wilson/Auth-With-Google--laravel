@@ -1,3 +1,14 @@
+<style>
+    .social-link {
+        margin-right: 10px;
+    }
+    .social-link img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+</style>
+
 <x-guest-layout>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -33,9 +44,7 @@
         </div>
 
         <div class="flex items-center justify-between mt-4">
-            {{-- Auth with Google --}}
-            <a href="{{ route('auth.google') }}" class="inline-block px-2 py-2 text-white bg-red-600 rounded-lg shadow-sm">Login with Google</a>
-            
+
             @if (Route::has('password.request'))
                 <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
                     {{ __('Forgot your password?') }}
@@ -46,5 +55,17 @@
                 {{ __('Log in') }}
             </x-primary-button>
         </div>
+        
+
+        {{-- Auth with google or facebook --}}
+
+           <div class="flex items-center justify-start mt-4">
+            {{-- Auth with Google --}}
+            <a title="Login with google" href="{{ route('social.redirect', 'google') }}" class="social-link inline-block px-3 py-2 rounded-lg shadow-sm">
+                <img src="{{ asset('assets/google.jpeg') }}" alt="">
+            </a>
+            <a title="Login with facebook" href="{{ route('social.redirect', 'facebook') }}" class="social-link inline-block px-6 py-2 rounded-lg shadow-sm">
+                <img src="{{ asset('assets/facebook.png') }}" alt="">
+            </a>
     </form>
 </x-guest-layout>
