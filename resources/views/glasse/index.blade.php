@@ -10,14 +10,34 @@
 <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] dark:text-[#EDEDEC] min-h-screen" x-data="{ modalOpen: false, currentImage: '' }">
     
     <!-- Header simple -->
-    <header class="border-b border-[#e3e3e0] dark:border-[#3E3E3A] py-6">
-        <div class="flex items-center justify-between px-6 mx-auto max-w-7xl">
-            <h1 class="text-2xl font-medium">Lunetterie</h1>
+    <!-- Header public – visible sur toute la vitrine -->
+<header class="border-b border-[#e3e3e0] dark:border-[#3E3E3A] py-6">
+    <div class="flex items-center justify-between px-6 mx-auto max-w-7xl">
+        <!-- Logo / Nom du site -->
+        <a href="{{ route('home') }}" class="text-2xl font-semibold tracking-tight">
+            Lunetterie
+        </a>
+
+        <!-- Boutons selon l’état de connexion -->
+        <div class="flex items-center gap-6 text-sm">
             @auth
-                <a href="{{ route('user.dashboard') }}" class="text-sm underline">Mon espace</a>
+                <a href="{{ route('user.dashboard') }}" class="font-medium underline hover:no-underline">
+                    Mon espace
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="font-medium hover:underline">
+                    Se connecter
+                </a>
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}"
+                       class="px-5 py-2 font-medium text-white transition bg-indigo-600 rounded-lg hover:bg-indigo-700">
+                        S’inscrire
+                    </a>
+                @endif
             @endauth
         </div>
-    </header>
+    </div>
+</header>
 
     <div class="px-6 py-12 mx-auto max-w-7xl">
         <h2 class="mb-12 text-4xl font-medium text-center">Nos lunettes</h2>

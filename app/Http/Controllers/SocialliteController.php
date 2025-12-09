@@ -23,7 +23,8 @@ class SocialliteController extends Controller
     public function socialAuthentication($provider)
     { try{
         if($provider){
-$socialUser = Socialite::driver($provider)->stateless()->user();            $user = User::where('auth_provider_id', $socialUser->id)->first();
+        $socialUser = Socialite::driver($provider)->stateless()->user();            
+        $user = User::where('auth_provider_id', $socialUser->id)->first();
       
             if($user){
             Auth::login($user);
@@ -39,10 +40,10 @@ $socialUser = Socialite::driver($provider)->stateless()->user();            $use
             ]);
             if($userData){
                 Auth::login($userData);
-                return redirect()->route('dashboard');
+                return redirect()->route('user.dashboard');
             }
         }
-           return redirect()->route('dashboard');
+           return redirect()->route('user.dashboard');
         }
         abort(404);
 
